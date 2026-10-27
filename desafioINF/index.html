@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simulador de integración numérica para Métodos Numéricos I.">
+    <title>Integración Numérica | Métodos Numéricos</title>
+    <link rel="stylesheet" href="estilos.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+<header class="encabezado" id="inicio">
+    <div class="encabezado-contenido">
+        <div class="etiqueta-superior">COM-254 · MÉTODOS NUMÉRICOS I</div>
+        <h1>Laboratorio de integración numérica</h1>
+        <p class="subtitulo">
+            Comparación de los métodos del trapecio compuesto, Simpson 1/3 y Simpson 3/8.
+        </p>
+    </div>
+</header>
+
+<nav class="barra-navegacion" aria-label="Navegación principal">
+    <a href="#inicio" class="marca">IN<span>·</span></a>
+    <div class="enlaces-nav">
+        <a href="#configuracion">Datos</a>
+        <a href="#resultados">Resultados</a>
+        <a href="#procedimiento">Procedimiento</a>
+        <a href="#informe">Informe</a>
+    </div>
+    <button id="btnCalcularNav" class="boton-nav" type="button">
+        Calcular
+    </button>
+</nav>
+
+<main class="contenedor">
+
+    <section class="panel bienvenida">
+        <div>
+            <span class="estado">SIMULADOR ACTIVO</span>
+            <h2>Analiza una integral paso a paso</h2>
+            <p>
+                Selecciona uno de los ejercicios, revisa los datos y compara
+                los resultados numéricos con una referencia cuando esté disponible.
+            </p>
+        </div>
+        <div class="bienvenida-icono" aria-hidden="true">∫</div>
+    </section>
+
+    <div class="distribucion-principal">
+
+        <!-- COLUMNA IZQUIERDA: DATOS Y CONFIGURACIÓN -->
+        <div class="columna-entrada">
+
+            <section class="panel" id="configuracion">
+                <div class="encabezado-panel">
+                    <span class="numero">01</span>
+                    <div>
+                        <h2>Configuración</h2>
+                        <p>Selecciona el problema y el método.</p>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="ejercicio">Ejercicio del desafío</label>
+                    <select id="ejercicio">
+                        <option value="19">19 · Distancia de un vehículo</option>
+                        <option value="20">20 · Trabajo de una banda elástica</option>
+                        <option value="21">21 · Perfil topográfico</option>
+                        <option value="22">22 · Longitud de una catenaria</option>
+                        <option value="23">23 · Caudal de una tubería</option>
+                        <option value="24">24 · Longitud de una cardioide</option>
+                        <option value="25">25 · Energía gravitatoria</option>
+                        <option value="26">26 · Área del lago Erie</option>
+                        <option value="27">27 · Volumen de un objeto</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="modo">Forma de ingreso</label>
+                    <select id="modo">
+                        <option value="tabla">Datos tabulados</option>
+                        <option value="funcion">Función matemática</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="metodo">Método para el procedimiento</label>
+                    <select id="metodo">
+                        <option value="trapecio">Trapecio compuesto</option>
+                        <option value="simpson13">Simpson 1/3</option>
+                        <option value="simpson38">Simpson 3/8</option>
+                        <option value="combinado">Simpson combinado</option>
+                    </select>
+                    <small>El panel de resultados compara todos los métodos compatibles.</small>
+                </div>
+
+                <div class="descripcion-ejercicio">
+                    <h3 id="tituloEjercicio">Distancia de un vehículo</h3>
+                    <p id="descripcion"></p>
+                    <div class="ecuacion" id="modelo"></div>
+                </div>
+            </section>
+
+            <section class="panel" id="datos">
+                <div class="encabezado-panel">
+                    <span class="numero">02</span>
+                    <div>
+                        <h2>Datos de entrada</h2>
+                        <p>Modifica los valores si necesitas probar otro caso.</p>
+                    </div>
+                </div>
+
+                <div id="entradaTabla">
+                    <div class="campo">
+                        <label for="datosX">Valores de x</label>
+                        <textarea id="datosX" rows="3"
+                            placeholder="Ejemplo: 0, 1, 2, 3, 4"></textarea>
+                    </div>
+
+                    <div class="campo">
+                        <label for="datosY">Valores de f(x) o y</label>
+                        <textarea id="datosY" rows="3"
+                            placeholder="Ejemplo: 0, 1, 4, 9, 16"></textarea>
+                    </div>
+
+                    <small>
+                        Separa los valores con comas, espacios o punto y coma.
+                        Las listas deben tener igual cantidad de datos y x debe ser creciente.
+                    </small>
+                </div>
+
+                <div id="entradaFuncion" class="oculto">
+                    <div class="campo">
+                        <label for="funcion">Función f(x)</label>
+                        <input id="funcion" type="text" value="x^2"
+                            placeholder="Ejemplo: x^2 + 2*x">
+                        <small>
+                            Operadores: +, -, *, /, ^. Funciones: sin, cos, tan,
+                            sqrt, abs, exp, log, ln, sinh y cosh. Constante: pi.
+                        </small>
+                    </div>
+
+                    <div class="rejilla-dos">
+                        <div class="campo">
+                            <label for="limiteA">Límite inferior (a)</label>
+                            <input id="limiteA" type="number" step="any" value="0">
+                        </div>
+                        <div class="campo">
+                            <label for="limiteB">Límite superior (b)</label>
+                            <input id="limiteB" type="number" step="any" value="2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rejilla-dos parametros">
+                    <div class="campo">
+                        <label for="n">Subintervalos (n)</label>
+                        <input id="n" type="number" min="1" step="1" value="4">
+                    </div>
+                    <div class="campo">
+                        <label for="factor">Factor de conversión</label>
+                        <input id="factor" type="number" step="any" value="1">
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="unidad">Unidad del resultado</label>
+                    <input id="unidad" type="text" value="unidades"
+                        placeholder="Ejemplo: m, J, mi²">
+                </div>
+
+                <div class="acciones">
+                    <button id="calcular" class="boton-principal" type="button">
+                        Calcular integral
+                    </button>
+                    <button id="validar" class="boton-secundario" type="button">
+                        Validar datos
+                    </button>
+                    <button id="cargar" class="boton-secundario" type="button">
+                        Cargar prueba x²
+                    </button>
+                </div>
+
+                <div id="mensaje" class="mensaje" role="status" aria-live="polite">
+                    Selecciona un ejercicio para comenzar.
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="encabezado-panel">
+                    <span class="numero">03</span>
+                    <div>
+                        <h2>Datos calculados</h2>
+                        <p>Revisa los nodos y el peso utilizado en cada punto.</p>
+                    </div>
+                </div>
+
+                <div class="resumen-parametros" id="resumenParametros">
+                    <div><span>Intervalo</span><strong>—</strong></div>
+                    <div><span>Espaciado h</span><strong>—</strong></div>
+                    <div><span>Número de n</span><strong>—</strong></div>
+                </div>
+
+                <div id="tablaCalculo" class="tabla-contenedor">
+                    <p class="texto-vacio">La tabla aparecerá después del cálculo.</p>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: RESULTADOS -->
+        <div class="columna-resultados">
+
+            <section class="panel panel-resultados" id="resultados">
+                <div class="encabezado-panel">
+                    <span class="numero">04</span>
+                    <div>
+                        <h2>Resultados</h2>
+                        <p>Comparación de las aproximaciones obtenidas.</p>
+                    </div>
+                </div>
+
+                <div class="estado-resultados" id="estadoResultados">
+                    Esperando el primer cálculo
+                </div>
+
+                <div id="resumen" class="resultados-grid">
+                    <div class="resultado-vacio">
+                        <span>∫</span>
+                        <h3>Sin resultados todavía</h3>
+                        <p>Completa los datos y pulsa «Calcular integral».</p>
+                    </div>
+                </div>
+
+                <div class="comparacion">
+                    <h3>Comparación visual</h3>
+                    <p class="ayuda">
+                        La gráfica representa los puntos introducidos y la curva que los conecta.
+                    </p>
+                    <div id="grafica" class="grafica-contenedor">
+                        <p class="texto-vacio">La gráfica aparecerá después del cálculo.</p>
+                    </div>
+                </div>
+
+                <div class="conclusion" id="conclusion">
+                    <h3>Interpretación</h3>
+                    <p>Los comentarios aparecerán después del cálculo.</p>
+                </div>
+
+                <div class="acciones acciones-procedimiento">
+                    <button id="btnProcedimiento" class="boton-principal" type="button" disabled>
+                        Mostrar procedimiento
+                    </button>
+                    <button id="btnImprimir" class="boton-secundario" type="button">
+                        Imprimir resultados
+                    </button>
+                </div>
+            </section>
+
+            <section class="panel oculto" id="procedimiento">
+                <div class="encabezado-panel">
+                    <span class="numero">05</span>
+                    <div>
+                        <h2>Procedimiento del método</h2>
+                        <p id="tituloProcedimiento">Desarrollo paso a paso.</p>
+                    </div>
+                </div>
+
+                <div id="formula">
+                    <p class="texto-vacio">Primero debes realizar un cálculo.</p>
+                </div>
+
+                <div id="desarrolloNumerico"></div>
+            </section>
+
+            <section class="panel" id="informe">
+                <div class="encabezado-panel">
+                    <span class="numero">06</span>
+                    <div>
+                        <h2>Informe técnico</h2>
+                        <p>Guía para preparar el documento de entrega.</p>
+                    </div>
+                </div>
+
+                <p>
+                    El desafío solicita un informe de máximo dos páginas.
+                    Utiliza estos apartados para comprobar que no falte información.
+                </p>
+
+                <ul class="lista-informe">
+                    <li><strong>Problema:</strong> contexto y objetivo.</li>
+                    <li><strong>Modelo:</strong> integral, límites, variables y unidades.</li>
+                    <li><strong>Datos:</strong> tabla y procedencia de los valores.</li>
+                    <li><strong>Cálculo:</strong> procedimiento manual y condiciones de cada método.</li>
+                    <li><strong>Resultados:</strong> comparación de métodos y errores cuando exista referencia.</li>
+                    <li><strong>Conclusión:</strong> interpretación física y limitaciones.</li>
+                </ul>
+
+                <div class="nota-informe">
+                    <strong>Entregables adicionales:</strong>
+                    hojas con el desarrollo manual de los dos problemas asignados,
+                    enlace de la aplicación publicada, repositorio GitHub y evidencias de pruebas.
+                </div>
+
+                <div class="acciones">
+                    <button id="btnImprimirInforme" class="boton-secundario" type="button">
+                        Imprimir página / guardar PDF
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <footer class="pie">
+        <p>COM-254 · Métodos Numéricos I · Integración numérica</p>
+        <a href="#inicio">Volver al inicio ↑</a>
+    </footer>
+</main>
+
+</body>
+</html>
